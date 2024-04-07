@@ -32,11 +32,11 @@ where
 
 def fix : ⟦ □ α ⟶ α ⟧ → ⟦ α ⟧ := extract ∘ fixb
 
-def loeb : ⟦□ (□ α ⟶ α) ⟶ □ α⟧ :=
+def loeb : ⟦ □ (□ α ⟶ α) ⟶ □ α ⟧ :=
   fix (λ rec alg => app alg (app rec (duplicate alg)))
 
 namespace Transitions
-  def le_close (down : ∀ m n, m ≤ n → α n → α m) : ⟦α ⟶ □ α⟧ :=
+  def le_close (down : ∀ m n, m ≤ n → α n → α m) : ⟦ α ⟶ □ α ⟧ :=
     λ a => ⟨λ mltn => down _ _ (Nat.le_of_lt mltn) a⟩
 
   def le_lower (mlen : m ≤ n) (b : (□ α) n) : (□ α) m :=

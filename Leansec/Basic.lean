@@ -1,7 +1,5 @@
 import Leansec.Indexed
 
-import Aesop
-
 import Mathlib.Data.Vector
 
 namespace Leansec

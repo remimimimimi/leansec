@@ -48,11 +48,11 @@ section Parser
     9 <$ exact '9',
   ]
 
-  def decimal_nat : ⟦Parser Nat⟧ :=
+  def decimal_nat : ⟦ Parser Nat ⟧ :=
     map (FreeSemigroup.foldl (λ n d => 10 * n + d) 0)
         (list1 decimal_digit)
 
-  def language : ⟦Language⟧ :=
+  def language : ⟦ Language ⟧ :=
     Box.fix $ λ rec =>
       let addop :=  or (Expr.Add <$ (exact '+'))
                        (Expr.Sub <$ (exact '-'))
