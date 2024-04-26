@@ -1,7 +1,6 @@
 import Mathlib.Algebra.Free
 
 namespace FreeSemigroup
-
   def toList (x : FreeSemigroup α) : List α := x.head :: x.tail
 
   def fromList : List α → Option (FreeSemigroup α)
@@ -9,6 +8,9 @@ namespace FreeSemigroup
     | x :: xs => some (FreeSemigroup.mk x xs)
 
   def cons (hd : α) (xxs : FreeSemigroup α) : FreeSemigroup α := ⟨hd, xxs.toList⟩
+
+  def map' (f : α → β) : FreeSemigroup α → FreeSemigroup β
+    | ⟨x, xs⟩ => ⟨f x, xs.map f⟩
 
   def foldl (f : β → α → β) (init : β) (xxs : FreeSemigroup α) : β :=
     List.foldl f init $ toList xxs
