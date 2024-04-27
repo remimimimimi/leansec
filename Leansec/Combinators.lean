@@ -160,18 +160,18 @@ section Combinators
 
     -- How to rewrite without tactic?
     -- TODO: Rewrite to support any token
-    def any_tok : ⟦ Parser mn ρ ρ.Tok ⟧ := Parser.mk λ _ ts =>
+    def anyTok : ⟦ Parser mn ρ ρ.Tok ⟧ := Parser.mk λ _ ts =>
       @Success.getTok ρ.Toks ρ.Tok _ _ ts |>.elim Alternative.failure $ λ t =>
         ρ.recordToken t.value *> pure t
 
     variable
       [DecidableEq ρ.Tok]
 
-    def any_of : List ρ.Tok → ⟦ Parser mn ρ ρ.Tok ⟧
-      | ts => guard (λ c => ts ≠ [] ∧ ts.any (· = c)) any_tok
+    def anyOf : List ρ.Tok → ⟦ Parser mn ρ ρ.Tok ⟧
+      | ts => guard (λ c => ts ≠ [] ∧ ts.any (· = c)) anyTok
 
     def exact : ρ.Tok → ⟦ Parser mn ρ ρ.Tok ⟧ :=
-      any_of ∘ pure
+      anyOf ∘ pure
 
     def exacts : FreeSemigroup ρ.Tok → ⟦ Parser mn ρ (FreeSemigroup ρ.Tok) ⟧ := λ ts =>
       -- ands (FreeSemigroup.map (λ t => @exact _ _ _ _ _ _ t _) ts)
@@ -258,7 +258,7 @@ section
         exact t.val
 
     def space : ⟦ Parser mn ρ ρ.Tok ⟧ :=
-      any_of (Coe.coe <$> (" \t\n\r\x0c").data)
+      anyOf (Coe.coe <$> (" \t\n\r\x0c").data)
 
     def spaces : ⟦Parser mn ρ (FreeSemigroup ρ.Tok)⟧ :=
       list1 space
@@ -270,7 +270,7 @@ section
   end Chars
 
   namespace Numbers
-    def decimal_digit : ⟦Parser mn ρ Nat⟧ := alts [
+    def decimalDigit : ⟦Parser mn ρ Nat⟧ := alts [
       0 <$ exact '0',
       1 <$ exact '1',
       2 <$ exact '2',
@@ -283,7 +283,7 @@ section
       9 <$ exact '9',
     ]
 
-    def decimal_nat : ⟦ Parser mn ρ Nat ⟧ :=
-      FreeSemigroup.foldl (λ n d => 10 * n + d) 0 <$> list1 decimal_digit
+    def decimalNat : ⟦ Parser mn ρ Nat ⟧ :=
+      FreeSemigroup.foldl (λ n d => 10 * n + d) 0 <$> list1 decimalDigit
   end Numbers
 end

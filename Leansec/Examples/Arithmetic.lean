@@ -41,7 +41,7 @@ section Parser
       let mulop :=  or (Term.Mul <$ (exact '*'))
                        (Term.Div <$ (exact '/'))
       let factor := Combinators.or (Factor.Emb <$> (parens (Box.map Language.expr rec)))
-                                   (Factor.Lit <$> decimal_nat)
+                                   (Factor.Lit <$> decimalNat)
       let term := hchainl (Term.Emb <$> factor) (box mulop) (box factor)
       let expr := hchainl (Expr.Emb <$> term) (box addop) (box term)
       Language.mk expr term factor
