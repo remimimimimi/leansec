@@ -53,12 +53,13 @@ section Parser
     refine ⟨?_⟩
     exact id
 
-  example : runParserOption "(1235+1)" (Language.expr language') = some
+  example : "(1235+1)" ∈ language'.expr :=
     (Expr.Emb (Term.Emb (Factor.Emb
       (Expr.Add
         (Expr.Emb (Term.Emb (Factor.Lit 1235)))
-        (Term.Emb (Factor.Lit 1)))))) := rfl
-  example : runParserOption "1+(2*31-4)" (Language.expr language') = some
+        (Term.Emb (Factor.Lit 1)))))) !
+
+  example : "1+(2*31-4)" ∈ language'.expr :=
     (Expr.Add
       (Expr.Emb (Term.Emb
         (Factor.Lit 1)))
@@ -67,5 +68,5 @@ section Parser
           (Expr.Emb (Term.Mul
               (Term.Emb (Factor.Lit 2))
               (Factor.Lit 31)))
-          (Term.Emb (Factor.Lit 4)))))) := rfl
+          (Term.Emb (Factor.Lit 4)))))) !
 end Parser
