@@ -11,7 +11,8 @@ def runParserOption (input : String) (p : Parser Option ⟨Char, Vector Char, λ
     input.length
     Nat.le.refl
     ⟨input.toList, rfl⟩
-  |>.map Success.value
+  |>.map Success.complete
+  |>.join
 
 inductive Singleton : α → Type where
   | mk (v : α) : Singleton v
