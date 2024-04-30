@@ -245,17 +245,12 @@ section
     def char : Char → ⟦ Parser mn ρ ρ.Tok ⟧ :=
       exact ∘ Coe.coe
 
-    def string (t : {s : String // (s.data.length > 0)}) : ⟦ Parser mn ρ String ⟧ :=
+    def string (t : {s : String // (s.data.length ≠ 0)}) : ⟦ Parser mn ρ String ⟧ :=
       λ {n : ℕ} =>
       match t with
       | ⟨⟨[]⟩, h⟩ => by contradiction
-      | ⟨⟨(x :: xs)⟩, _⟩ => by
-        let s : FreeSemigroup Char := ⟨x, xs⟩
-        let ss : FreeSemigroup  (Parser mn ρ ρ.Tok n) :=
-          FreeSemigroup.map' (@char _ _ _ _ _ _ _ · n) s
-        let ss' : Parser mn ρ (FreeSemigroup ρ.Tok) n := ands ss
-        refine (mapc ?_ ss')
-        exact t.val
+      | ⟨⟨(x :: xs)⟩, _⟩ =>
+        mapc t.val $ exacts $ FreeSemigroup.map (↑) ⟨x, xs⟩
 
     def space : ⟦ Parser mn ρ ρ.Tok ⟧ :=
       anyOf (Coe.coe <$> (" \t\n\r\x0c").data)

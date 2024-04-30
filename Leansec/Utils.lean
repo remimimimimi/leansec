@@ -22,7 +22,11 @@ namespace FreeSemigroup
     List.foldl f xxs.head xxs.tail
 
   def foldr1 (f : α → α → α) (xxs : FreeSemigroup α) : α :=
-    List.foldr f xxs.head xxs.tail
+    go xxs.head xxs.tail
+  where
+    go : α → List α → α
+    | x, [] => x
+    | x, y :: ys => f x (go y ys)
 
   def append : FreeSemigroup α → FreeSemigroup α → FreeSemigroup α :=
     flip $ foldr cons
