@@ -225,10 +225,13 @@ section Combinators
     variable
       [Monad mn] [Alternative mn]
 
+    def headAndTail : ⟦ Parser mn ρ α ⟶ Parser mn ρ α ⟶ Parser mn ρ (FreeSemigroup α) ⟧ := λ hd tl =>
+      flip iterater (FreeSemigroup.of <$> hd) $ map FreeSemigroup.cons tl
+
     def list1 : ⟦ Parser mn ρ α ⟶ Parser mn ρ (FreeSemigroup α) ⟧ :=
-    Box.fix $ λ rec pa =>
-      map (λ (hd, tl) => ⟨hd, tl.elim [] FreeSemigroup.toList⟩)
-      (ando pa (Box.app rec pa))
+      Box.fix $ λ rec pa =>
+        map (λ (hd, tl) => ⟨hd, tl.elim [] FreeSemigroup.toList⟩)
+        (ando pa (Box.app rec pa))
   end List
 end Combinators
 
