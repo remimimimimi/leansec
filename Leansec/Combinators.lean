@@ -26,6 +26,18 @@ def box : ⟦ Parser mn ρ α ⟶ □ Parser mn ρ α ⟧ :=
 instance : Coe (Parser mn ρ α n) ((□ Parser mn ρ α) n) where
   coe := box
 
+def lift2 : ⟦ Parser mn ρ α ⟶ Parser mn ρ β ⟶ Parser mn ρ γ ⟧ →
+                   ⟦ □ Parser mn ρ α ⟶ □ Parser mn ρ β ⟶ □ Parser mn ρ γ ⟧ :=
+  Box.map2
+
+def lift2l : ⟦ Parser mn ρ α ⟶ Parser mn ρ β ⟶ Parser mn ρ γ ⟧ →
+             ⟦ □ Parser mn ρ α ⟶ Parser mn ρ β ⟶ □ Parser mn ρ γ ⟧ :=
+  λ f _ a b => lift2 f a (box b)
+
+def lift2r : ⟦ Parser mn ρ α ⟶ Parser mn ρ β ⟶ Parser mn ρ γ ⟧ →
+             ⟦ Parser mn ρ α ⟶ □ Parser mn ρ β ⟶ □ Parser mn ρ γ ⟧ :=
+  λ f _ a b => lift2 f (box a) b
+
 -- TODO: Implement combinators as instances of corresponding type classes to
 -- avoid ambiguity in notation. Understand how to implement Functor and other
 -- type classes for indexed types, because typechecker fails when flipping
@@ -171,7 +183,7 @@ section Combinators
       | ts => guard (λ c => ts ≠ [] ∧ ts.any (· = c)) anyTok
 
     def exact : ρ.Tok → ⟦ Parser mn ρ ρ.Tok ⟧ :=
-      anyOf ∘ pure
+      anyOf ∘ List.singleton
 
     def exacts : FreeSemigroup ρ.Tok → ⟦ Parser mn ρ (FreeSemigroup ρ.Tok) ⟧ := λ ts =>
       -- ands (FreeSemigroup.map (λ t => @exact _ _ _ _ _ _ t _) ts)
@@ -253,7 +265,7 @@ section
       match t with
       | ⟨⟨[]⟩, h⟩ => by contradiction
       | ⟨⟨(x :: xs)⟩, _⟩ =>
-        mapc t.val $ exacts $ FreeSemigroup.map (↑) ⟨x, xs⟩
+        mapc t.val $ exacts $ FreeSemigroup.map (↑·) ⟨x, xs⟩
 
     def space : ⟦ Parser mn ρ ρ.Tok ⟧ :=
       anyOf (Coe.coe <$> (" \t\n\r\x0c").data)

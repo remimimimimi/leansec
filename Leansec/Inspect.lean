@@ -1,5 +1,5 @@
 import Leansec.Indexed
-import Mathlib.Data.Vector
+import Init.Data.Vector
 
 namespace Leansec
 
@@ -15,9 +15,17 @@ class Inspect (as : Nat → Type) (a : Type) where
   inspect : ⟦as ⟶ Option ∘ Inspect.View as a⟧
 
 instance : Inspect (Vector α) α where
-  inspect
-  | ⟨[], _⟩ => none
-  | ⟨x :: xs, h⟩ => some (by
-    simp [← h, List.length_cons, Inspect.View]
-    exact (x, ⟨xs, rfl⟩)
-  )
+  inspect {n} v := v.elimAsList λ l h =>
+    match l with
+    | [] => none
+    | x :: xs => some (by
+      simp [List.length_cons] at h
+      simp [← h, Inspect.View]
+      refine (x, ?_)
+      have len_xs : xs.length = n - 1 := by
+        calc
+          xs.length = xs.length + 1 - 1 := by simp
+          _ = n - 1 := by rw[h]
+      rw [len_xs]
+      exact v.tail
+    )
